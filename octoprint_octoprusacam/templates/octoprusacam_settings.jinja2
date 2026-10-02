@@ -1,0 +1,236 @@
+<form class="form-horizontal octoprusacam-settings" id="settings_plugin_octoprusacam">
+    <div class="alert alert-info">
+        <strong>OctoPrusaCam</strong> verbindet deine OctoPrint-Kamera mit <strong>Prusa Connect</strong>.
+        Jede Kamera wird als eigenständige Snapshot-Kamera in Prusa Connect geführt.
+    </div>
+
+    <!-- Live Status Box -->
+    <div class="control-group">
+        <label class="control-label">Status</label>
+        <div class="controls">
+            <div class="octoprusacam-status-badge">
+                <!-- ko if: statusSuccess() === true -->
+                <span class="label label-success"><i class="icon-ok-sign"></i> Verbunden / Upload OK</span>
+                <!-- /ko -->
+                <!-- ko if: statusSuccess() === false -->
+                <span class="label label-important"><i class="icon-warning-sign"></i> Fehler beim Upload</span>
+                <!-- /ko -->
+                <!-- ko if: statusSuccess() === null -->
+                <span class="label label-info"><i class="icon-info-sign"></i> Bereit / Nicht gestartet</span>
+                <!-- /ko -->
+
+                <span class="muted octoprusacam-status-text" data-bind="text: statusMessage"></span>
+                <!-- ko if: statusTime -->
+                <small class="muted" style="display:block; margin-top:3px;">
+                    Letzter Status: <span data-bind="text: statusTime"></span>
+                </small>
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+
+    <!-- General Settings -->
+    <div class="control-group">
+        <div class="controls">
+            <label class="checkbox">
+                <input type="checkbox" data-bind="checked: settings.plugins.octoprusacam.enabled">
+                <strong>Prusa Connect Camera Bridge aktivieren</strong>
+            </label>
+            <span class="help-block">Aktiviert den periodischen Bildupload an Prusa Connect.</span>
+        </div>
+    </div>
+
+    <!-- Prusa Connect Credentials -->
+    <fieldset>
+        <legend>Prusa Connect Zugangsdaten</legend>
+
+        <div class="control-group">
+            <label class="control-label" for="octoprusacam_token">Kamera Token <span class="text-error">*</span></label>
+            <div class="controls">
+                <div class="input-append">
+                    <input id="octoprusacam_token"
+                           class="input-xlarge"
+                           data-bind="attr: { type: showToken() ? 'text' : 'password' }, value: settings.plugins.octoprusacam.token"
+                           placeholder="z.B. a1b2c3d4e5f6... (20 Zeichen)">
+                    <button class="btn" type="button" data-bind="click: toggleShowToken" title="Token anzeigen / verbergen">
+                        <i data-bind="css: { 'icon-eye-open': !showToken(), 'icon-eye-close': showToken() }"></i>
+                    </button>
+                </div>
+                <span class="help-block">
+                    Erstelle in <strong>Prusa Connect</strong> unter <em>Drucker &rarr; Kamera &rarr; + Neue andere Kamera hinzufügen</em> eine Kamera und trage den dort angezeigten Token hier ein.
+                </span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="octoprusacam_fingerprint">Fingerprint</label>
+            <div class="controls">
+                <div class="input-append">
+                    <input id="octoprusacam_fingerprint"
+                           type="text"
+                           class="input-xlarge"
+                           data-bind="value: settings.plugins.octoprusacam.fingerprint"
+                           placeholder="Eindeutige Kamera-ID (z.B. 16 Hex-Zeichen)">
+                    <button class="btn" type="button" data-bind="click: generateFingerprint" title="Neuen Fingerprint generieren">
+                        <i class="icon-refresh"></i> Neu
+                    </button>
+                </div>
+                <span class="help-block">
+                    Eindeutige Hardware-/Kamera-Kennung. Falls von Prusa Connect vorgegeben, hier eintragen, ansonsten den automatisch generierten Wert verwenden.
+                </span>
+            </div>
+        </div>
+    </fieldset>
+
+    <hr/>
+
+    <!-- Camera Source Settings -->
+    <fieldset>
+        <legend>Kamera-Quelle & Bildanpassung</legend>
+
+        <div class="control-group">
+            <label class="control-label" for="octoprusacam_snapshot_url">Snapshot-URL</label>
+            <div class="controls">
+                <input id="octoprusacam_snapshot_url"
+                       type="text"
+                       class="input-xxlarge"
+                       data-bind="value: settings.plugins.octoprusacam.snapshot_url"
+                       placeholder="Leer lassen für OctoPrint Standard-Webcam">
+                <span class="help-block">
+                    Lasse dieses Feld leer, um die in OctoPrint konfigurierte Webcam Snapshot-URL (z.B. <code>/webcam/?action=snapshot</code> oder <code>http://127.0.0.1:8080/?action=snapshot</code>) automatisch zu verwenden.
+                </span>
+            </div>
+        </div>
+
+        <!-- Optional Basic Auth -->
+        <div class="control-group">
+            <label class="control-label">Kamera-Authentifizierung</label>
+            <div class="controls">
+                <div class="input-prepend">
+                    <span class="add-on"><i class="icon-user"></i></span>
+                    <input type="text"
+                           class="input-medium"
+                           data-bind="value: settings.plugins.octoprusacam.snapshot_auth_user"
+                           placeholder="Benutzername">
+                </div>
+                <div class="input-prepend" style="margin-left: 10px;">
+                    <span class="add-on"><i class="icon-key"></i></span>
+                    <input type="password"
+                           class="input-medium"
+                           data-bind="value: settings.plugins.octoprusacam.snapshot_auth_pass"
+                           placeholder="Passwort">
+                </div>
+                <span class="help-block">Nur erforderlich, falls deine Webcam-Snapshot-URL mit HTTP Basic Auth geschützt ist.</span>
+            </div>
+        </div>
+
+        <!-- Rotation & Flip -->
+        <div class="control-group">
+            <label class="control-label">Bildausrichtung</label>
+            <div class="controls">
+                <select class="input-medium" data-bind="value: settings.plugins.octoprusacam.rotate">
+                    <option value="0">0° (Normal)</option>
+                    <option value="90">90° im Uhrzeigersinn</option>
+                    <option value="180">180° auf den Kopf</option>
+                    <option value="270">270° im Uhrzeigersinn</option>
+                </select>
+                <label class="checkbox inline" style="margin-left: 15px;">
+                    <input type="checkbox" data-bind="checked: settings.plugins.octoprusacam.flip_h"> Horizontal spiegeln
+                </label>
+                <label class="checkbox inline" style="margin-left: 15px;">
+                    <input type="checkbox" data-bind="checked: settings.plugins.octoprusacam.flip_v"> Vertikal spiegeln
+                </label>
+            </div>
+        </div>
+    </fieldset>
+
+    <hr/>
+
+    <!-- Upload Timing & Trigger -->
+    <fieldset>
+        <legend>Upload-Intervall & Verhalten</legend>
+
+        <div class="control-group">
+            <label class="control-label" for="octoprusacam_interval">Upload-Intervall (Sekunden)</label>
+            <div class="controls">
+                <input id="octoprusacam_interval"
+                       type="number"
+                       min="2"
+                       max="3600"
+                       step="1"
+                       class="input-mini"
+                       data-bind="value: settings.plugins.octoprusacam.upload_interval">
+                <span class="help-inline">Sekunden (Standard & Empfehlung von Prusa: <strong>10s</strong>)</span>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="controls">
+                <label class="checkbox">
+                    <input type="checkbox" data-bind="checked: settings.plugins.octoprusacam.upload_only_printing">
+                    <strong>Nur während des Drucks hochladen</strong>
+                </label>
+                <span class="help-block">Pausiert den Upload, wenn der Drucker im Leerlauf oder ausgeschaltet ist, um Netzwerk- und Server-Ressourcen zu schonen.</span>
+            </div>
+        </div>
+    </fieldset>
+
+    <hr/>
+
+    <!-- Test & Diagnostics -->
+    <fieldset>
+        <legend>Verbindungstest & Vorschau</legend>
+
+        <div class="control-group">
+            <div class="controls">
+                <button type="button"
+                        class="btn btn-info"
+                        data-bind="click: testSnapshotOnly, disable: isTesting">
+                    <i class="icon-camera" data-bind="css: { 'icon-spin icon-spinner': isTestingSnapshot }"></i>
+                    Lokalen Snapshot testen
+                </button>
+
+                <button type="button"
+                        class="btn btn-primary"
+                        style="margin-left: 10px;"
+                        data-bind="click: testUploadPrusa, disable: isTesting">
+                    <i class="icon-upload" data-bind="css: { 'icon-spin icon-spinner': isTestingUpload }"></i>
+                    Snapshot an Prusa Connect hochladen (Test)
+                </button>
+            </div>
+        </div>
+
+        <!-- Test Feedback Alert -->
+        <!-- ko if: testFeedbackMessage -->
+        <div class="control-group">
+            <div class="controls">
+                <div class="alert" data-bind="css: { 'alert-success': testFeedbackSuccess(), 'alert-error': !testFeedbackSuccess() }">
+                    <button type="button" class="close" data-bind="click: clearFeedback">&times;</button>
+                    <!-- ko if: testFeedbackSuccess() -->
+                    <strong><i class="icon-ok-sign"></i> Erfolg: </strong>
+                    <!-- /ko -->
+                    <!-- ko if: !testFeedbackSuccess() -->
+                    <strong><i class="icon-exclamation-sign"></i> Fehler: </strong>
+                    <!-- /ko -->
+                    <span data-bind="text: testFeedbackMessage"></span>
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+
+        <!-- Snapshot Preview Box -->
+        <!-- ko if: previewImage -->
+        <div class="control-group">
+            <label class="control-label">Bildvorschau</label>
+            <div class="controls">
+                <div class="octoprusacam-preview-box">
+                    <img data-bind="attr: { src: previewImage }" alt="Kamera Snapshot Vorschau" class="octoprusacam-preview-img"/>
+                </div>
+                <span class="help-block">Zuletzt erfasster Snapshot (mit angewandter Drehung / Spiegelung).</span>
+            </div>
+        </div>
+        <!-- /ko -->
+    </fieldset>
+</form>

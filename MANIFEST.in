@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+recursive-include octoprint_octoprusacam/templates *
+recursive-include octoprint_octoprusacam/static *
+recursive-include octoprint_octoprusacam/translations *

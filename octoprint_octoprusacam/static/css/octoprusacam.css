@@ -1,0 +1,38 @@
+.octoprusacam-settings fieldset {
+    margin-bottom: 20px;
+}
+
+.octoprusacam-settings legend {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.octoprusacam-status-badge {
+    padding: 6px 0;
+}
+
+.octoprusacam-status-text {
+    margin-left: 8px;
+    font-size: 13px;
+}
+
+.octoprusacam-preview-box {
+    margin-top: 10px;
+    max-width: 480px;
+    background-color: #222;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 4px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.octoprusacam-preview-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 2px;
+    display: inline-block;
+}

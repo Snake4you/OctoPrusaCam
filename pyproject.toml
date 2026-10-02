@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "OctoPrusaCam"
+version = "1.0.0"
+description = "Bridge OctoPrint camera snapshots to Prusa Connect Camera API"
+readme = "README.md"
+authors = [{ name = "Snake4you" }]
+license = { text = "Apache-2.0" }
+requires-python = ">=3.7"
+dependencies = [
+    "requests>=2.20.0",
+    "Pillow>=6.2.0",
+]
+classifiers = [
+    "Environment :: Plugins",
+    "Framework :: OctoPrint",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+Homepage = "https://github.com/Snake4you/OctoPrusaCam"
+"Bug Tracker" = "https://github.com/Snake4you/OctoPrusaCam/issues"
+Source = "https://github.com/Snake4you/OctoPrusaCam"
+
+[project.entry-points."octoprint.plugin"]
+octoprusacam = "octoprint_octoprusacam"
