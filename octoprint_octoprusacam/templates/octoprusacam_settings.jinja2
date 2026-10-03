@@ -47,6 +47,20 @@
         <legend>Prusa Connect Zugangsdaten</legend>
 
         <div class="control-group">
+            <label class="control-label" for="octoprusacam_camera_name">Kamera-Name</label>
+            <div class="controls">
+                <input id="octoprusacam_camera_name"
+                       type="text"
+                       class="input-xlarge"
+                       data-bind="value: settingsViewModel.settings.plugins.octoprusacam.camera_name"
+                       placeholder="Octoprint Cam">
+                <span class="help-block">
+                    Name der Kamera in Prusa Connect und der Prusa App (Standard: <strong>Octoprint Cam</strong>).
+                </span>
+            </div>
+        </div>
+
+        <div class="control-group">
             <label class="control-label" for="octoprusacam_token">Kamera Token <span class="text-error">*</span></label>
             <div class="controls">
                 <div class="input-append">

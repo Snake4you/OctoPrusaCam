@@ -43,6 +43,7 @@ $(function() {
                 return {
                     token: "",
                     fingerprint: "",
+                    camera_name: "Octoprint Cam",
                     snapshot_url: "",
                     snapshot_auth_user: "",
                     snapshot_auth_pass: "",
@@ -54,6 +55,7 @@ $(function() {
             return {
                 token: (s.token ? s.token() : "") || "",
                 fingerprint: (s.fingerprint ? s.fingerprint() : "") || "",
+                camera_name: (s.camera_name ? s.camera_name() : "") || "Octoprint Cam",
                 snapshot_url: (s.snapshot_url ? s.snapshot_url() : "") || "",
                 snapshot_auth_user: (s.snapshot_auth_user ? s.snapshot_auth_user() : "") || "",
                 snapshot_auth_pass: (s.snapshot_auth_pass ? s.snapshot_auth_pass() : "") || "",

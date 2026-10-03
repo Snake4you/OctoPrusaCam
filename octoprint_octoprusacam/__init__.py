@@ -24,6 +24,7 @@ class OctoPrusaCamPlugin(
     octoprint.plugin.EventHandlerPlugin,
 ):
     PRUSA_CONNECT_SNAPSHOT_URL = "https://connect.prusa3d.com/c/snapshot"
+    PRUSA_CONNECT_INFO_URL = "https://connect.prusa3d.com/c/info"
 
     def __init__(self):
         self._timer = None
@@ -33,6 +34,7 @@ class OctoPrusaCamPlugin(
             "timestamp": None,
             "status_code": None,
         }
+        self._last_synced_camera_info = None
 
     # ~~ SettingsPlugin mixin
 
@@ -41,6 +43,7 @@ class OctoPrusaCamPlugin(
             "enabled": False,
             "token": "",
             "fingerprint": "",
+            "camera_name": "Octoprint Cam",
             "snapshot_url": "",
             "snapshot_timeout": 5,
             "upload_timeout": 10,
@@ -69,6 +72,18 @@ class OctoPrusaCamPlugin(
 
         new_enabled = self._settings.get_boolean(["enabled"])
         new_interval = self._settings.get_int(["upload_interval"])
+
+        token = (self._settings.get(["token"]) or "").strip()
+        fingerprint = (self._settings.get(["fingerprint"]) or "").strip()
+        camera_name = (self._settings.get(["camera_name"]) or "Octoprint Cam").strip() or "Octoprint Cam"
+
+        if token and fingerprint:
+            sync_key = (token, fingerprint, camera_name)
+            if self._last_synced_camera_info != sync_key:
+                try:
+                    self._update_camera_info(token=token, fingerprint=fingerprint, camera_name=camera_name)
+                except Exception as e:
+                    self._logger.warning("Could not sync camera info on settings save: %s", e)
 
         if not new_enabled:
             self._stop_timer()
@@ -154,7 +169,17 @@ class OctoPrusaCamPlugin(
                 "timestamp": time.time(),
                 "status_code": status_code,
             }
-            if not success:
+            if success:
+                camera_name = (self._settings.get(["camera_name"]) or "Octoprint Cam").strip() or "Octoprint Cam"
+                sync_key = (token, fingerprint, camera_name)
+                if self._last_synced_camera_info != sync_key:
+                    self._update_camera_info(
+                        token=token,
+                        fingerprint=fingerprint,
+                        camera_name=camera_name,
+                        timeout=self._settings.get_int(["upload_timeout"]) or 10,
+                    )
+            else:
                 self._logger.warning("Snapshot upload failed (%s): %s", status_code, message)
         except Exception as e:
             self._logger.error("Exception during snapshot upload: %s", e)
@@ -290,6 +315,46 @@ class OctoPrusaCamPlugin(
         except requests.exceptions.RequestException as e:
             return False, 500, "Network error uploading snapshot: {}".format(str(e))
 
+    def _update_camera_info(self, token, fingerprint, camera_name="Octoprint Cam", timeout=10):
+        name = (camera_name or "Octoprint Cam").strip() or "Octoprint Cam"
+        headers = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "fingerprint": str(fingerprint).strip(),
+            "token": str(token).strip(),
+            "Fingerprint": str(fingerprint).strip(),
+            "Token": str(token).strip(),
+            "Camera-Token": str(token).strip(),
+        }
+        payload = {
+            "config": {
+                "name": name,
+            },
+            "name": name,
+            "camera_name": name,
+        }
+        try:
+            res = requests.put(
+                self.PRUSA_CONNECT_INFO_URL,
+                json=payload,
+                headers=headers,
+                timeout=timeout,
+            )
+            if res.status_code in (200, 204):
+                self._last_synced_camera_info = (str(token).strip(), str(fingerprint).strip(), name)
+                self._logger.info("Updated camera name to '%s' in Prusa Connect", name)
+                return True, res.status_code, "Camera name updated successfully."
+            else:
+                self._logger.warning(
+                    "Updating camera info in Prusa Connect returned HTTP %s: %s",
+                    res.status_code,
+                    res.text[:200],
+                )
+                return False, res.status_code, "Failed to update camera info (HTTP {})".format(res.status_code)
+        except Exception as e:
+            self._logger.warning("Exception updating camera info in Prusa Connect: %s", e)
+            return False, 500, str(e)
+
     # ~~ SimpleApiPlugin mixin
 
     def get_api_commands(self):
@@ -313,6 +378,7 @@ class OctoPrusaCamPlugin(
             return flask.jsonify(
                 {
                     "enabled": self._settings.get_boolean(["enabled"]),
+                    "camera_name": (self._settings.get(["camera_name"]) or "Octoprint Cam").strip() or "Octoprint Cam",
                     "is_printing": self._printer.is_printing() or self._printer.is_paused(),
                     "resolved_url": self._resolve_snapshot_url(),
                     "last_status": {
@@ -367,6 +433,7 @@ class OctoPrusaCamPlugin(
             # Test full cycle: snapshot + upload to Prusa Connect
             token = data.get("token") or self._settings.get(["token"])
             fingerprint = data.get("fingerprint") or self._settings.get(["fingerprint"])
+            camera_name = data.get("camera_name") or self._settings.get(["camera_name"]) or "Octoprint Cam"
             snapshot_url = data.get("snapshot_url")
             auth_user = data.get("snapshot_auth_user")
             auth_pass = data.get("snapshot_auth_pass")
@@ -417,6 +484,14 @@ class OctoPrusaCamPlugin(
                 fingerprint=fingerprint,
                 timeout=15,
             )
+
+            if success:
+                self._update_camera_info(
+                    token=token,
+                    fingerprint=fingerprint,
+                    camera_name=camera_name,
+                    timeout=10,
+                )
 
             b64_img = base64.b64encode(img_bytes).decode("ascii")
             return (
@@ -470,7 +545,7 @@ class OctoPrusaCamPlugin(
 
 __plugin_name__ = "OctoPrusaCam"
 __plugin_pythoncompat__ = ">=3.7,<4"
-__plugin_version__ = "1.0.2"
+__plugin_version__ = "1.0.3"
 __plugin_description__ = "Bridge OctoPrint camera snapshots to Prusa Connect Camera API"
 __plugin_author__ = "Snake4you"
 __plugin_author_email__ = "snake4you@users.noreply.github.com"

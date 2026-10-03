@@ -3,7 +3,7 @@
 [![OctoPrint Plugin](https://img.shields.io/badge/OctoPrint-Plugin-blue.svg)](https://octoprint.org)
 [![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Release](https://img.shields.io/badge/version-1.0.2-green.svg)](https://github.com/Snake4you/OctoPrusaCam/releases)
+[![Release](https://img.shields.io/badge/version-1.0.3-green.svg)](https://github.com/Snake4you/OctoPrusaCam/releases)
 
 **OctoPrusaCam** ist ein leichtgewichtiges OctoPrint-Plugin, das als direkte Bridge zwischen deiner in OctoPrint eingerichteten Webcam und der **Prusa Connect Camera API** dient.
 
@@ -15,6 +15,7 @@ Damit kannst du den Live-Snapshot-Feed deines Druckers nahtlos in der Prusa Conn
 
 - 🔄 **Nahtlose Prusa Connect Integration:** Lädt periodisch Snapshots über den offiziellen Prusa Connect API-Endpunkt (`https://connect.prusa3d.com/c/snapshot`) per HTTP PUT hoch.
 - ⚙️ **Umfangreiche Konfigurationsseite:** Integriert sich direkt in die OctoPrint-Einstellungen unter *Prusa Connect Cam*.
+- 🏷️ **Eigener Kamera-Name:** Frei konfigurierbarer Name (Standard: **Octoprint Cam**), der automatisch mit Prusa Connect synchronisiert wird, anstelle von "Unbenannte Kamera".
 - 🔑 **Token- & Fingerprint-Verwaltung:** Sichere Eingabe des Prusa Connect Kamera-Tokens (mit Ein-/Ausblenden) und automatischer Fingerprint-Generator.
 - 📷 **Automatische Webcam-Erkennung:** Verwendet standardmäßig die in OctoPrint konfigurierte Snapshot-URL (z.B. `/webcam/?action=snapshot` oder `http://127.0.0.1:8080/?action=snapshot`), unterstützt aber auch beliebige benutzerdefinierte URLs.
 - 🧪 **Live-Test mit Vorschau:**
@@ -81,6 +82,7 @@ sudo service octoprint restart
 | Option | Typ | Standard | Beschreibung |
 | :--- | :---: | :---: | :--- |
 | **Prusa Connect Camera Bridge aktivieren** | Checkbox | `false` | Schaltet den automatischen Snapshot-Upload ein oder aus. |
+| **Kamera-Name** | Text | `"Octoprint Cam"` | Frei wählbarer Name der Kamera in Prusa Connect und der Prusa App. |
 | **Kamera Token** | Text | `""` | Der 20-stellige Authentifizierungs-Token von Prusa Connect. |
 | **Fingerprint** | Text | *auto* | Eindeutige Kennung deiner Kamera (16 Hex-Zeichen). Kann per Klick neu generiert werden. |
 | **Snapshot-URL** | Text | `""` | Snapshot-URL der Kamera. Leer lassen für OctoPrints Standard-Webcam. |
