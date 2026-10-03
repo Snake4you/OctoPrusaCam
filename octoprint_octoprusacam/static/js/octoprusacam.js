@@ -109,6 +109,18 @@ $(function() {
                     flip_h: (pSettings.flip_h ? ko.unwrap(pSettings.flip_h) : false) || false,
                     flip_v: (pSettings.flip_v ? ko.unwrap(pSettings.flip_v) : false) || false
                 }];
+            } else if (rawCameras.length > 0) {
+                // If primary camera lost token or fingerprint during initial migration, recover from legacy
+                var legacyToken = (pSettings.token ? ko.unwrap(pSettings.token) : "") || "";
+                var legacyFp = (pSettings.fingerprint ? ko.unwrap(pSettings.fingerprint) : "") || "";
+                var firstToken = ko.unwrap(rawCameras[0].token);
+                var firstFp = ko.unwrap(rawCameras[0].fingerprint);
+                if ((!firstToken || firstToken.trim() === "") && legacyToken) {
+                    rawCameras[0].token = legacyToken;
+                }
+                if ((!firstFp || firstFp.trim() === "") && legacyFp) {
+                    rawCameras[0].fingerprint = legacyFp;
+                }
             }
 
             var mapped = [];

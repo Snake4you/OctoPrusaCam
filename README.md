@@ -3,7 +3,7 @@
 [![OctoPrint Plugin](https://img.shields.io/badge/OctoPrint-Plugin-blue.svg)](https://octoprint.org)
 [![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Release](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/Snake4you/OctoPrusaCam/releases)
+[![Release](https://img.shields.io/badge/version-1.1.1-green.svg)](https://github.com/Snake4you/OctoPrusaCam/releases)
 
 **OctoPrusaCam** ist ein leichtgewichtiges OctoPrint-Plugin, das als direkte Bridge zwischen deinen in OctoPrint eingerichteten Kameras und der **Prusa Connect Camera API** dient.
 

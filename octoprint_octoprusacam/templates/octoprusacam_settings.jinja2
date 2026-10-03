@@ -160,13 +160,14 @@
                         <input type="text"
                                class="input-xlarge"
                                data-bind="value: fingerprint"
-                               placeholder="Eindeutige Kamera-ID (z.B. 16 Hex-Zeichen)">
+                               placeholder="Eindeutige Kamera-ID (automatisch generiert)">
                         <button class="btn" type="button" data-bind="click: function() { $root.generateFingerprintForCamera($data); }" title="Neuen Fingerprint generieren">
                             <i class="icon-refresh"></i> Neu
                         </button>
                     </div>
                     <span class="help-block">
-                        Eindeutige Hardware-/Kamera-Kennung. Für jede Kamera wird automatisch ein eigener Fingerprint verwendet.
+                        <strong>Hinweis:</strong> Der Fingerprint wird von OctoPrusaCam automatisch generiert und beim ersten Upload fest mit deinem Prusa Connect Token verknüpft (in Prusa Connect wird er <em>nicht</em> angezeigt).<br/>
+                        <span class="text-warning"><i class="icon-warning-sign"></i> <strong>Wichtig:</strong> Ändere den Fingerprint nicht nachträglich! Bei einer Änderung verweigert Prusa Connect den Zugriff mit <strong>HTTP 403 Forbidden</strong>. In dem Fall muss in Prusa Connect eine neue Kamera angelegt werden.</span>
                     </span>
                 </div>
             </div>

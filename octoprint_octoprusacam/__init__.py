@@ -47,22 +47,8 @@ class OctoPrusaCamPlugin(
             "upload_interval": 10,
             "upload_only_printing": False,
             "snapshot_timeout": 5,
-            # Multi-camera list
-            "cameras": [
-                {
-                    "id": "cam_default",
-                    "name": "Octoprint Cam",
-                    "enabled": True,
-                    "token": "",
-                    "fingerprint": "",
-                    "snapshot_url": "",
-                    "snapshot_auth_user": "",
-                    "snapshot_auth_pass": "",
-                    "rotate": 0,
-                    "flip_h": False,
-                    "flip_v": False,
-                }
-            ],
+            # Multi-camera list (defaults to empty so existing legacy single-camera configs migrate cleanly)
+            "cameras": [],
             # Legacy single-camera settings kept for migration & fallback
             "token": "",
             "fingerprint": "",
@@ -85,10 +71,11 @@ class OctoPrusaCamPlugin(
 
     def _get_cameras(self):
         cameras = self._settings.get(["cameras"])
+        legacy_token = (self._settings.get(["token"]) or "").strip()
+        legacy_name = (self._settings.get(["camera_name"]) or "Octoprint Cam").strip() or "Octoprint Cam"
+        legacy_fp = (self._settings.get(["fingerprint"]) or "").strip()
+
         if not cameras or not isinstance(cameras, list):
-            legacy_token = (self._settings.get(["token"]) or "").strip()
-            legacy_name = (self._settings.get(["camera_name"]) or "Octoprint Cam").strip() or "Octoprint Cam"
-            legacy_fp = (self._settings.get(["fingerprint"]) or "").strip()
             cameras = [
                 {
                     "id": "cam_default",
@@ -120,6 +107,16 @@ class OctoPrusaCamPlugin(
             if not c.get("name"):
                 c["name"] = f"Octoprint Cam {i+1}" if i > 0 else "Octoprint Cam"
                 changed = True
+
+            # If the primary camera is missing token or fingerprint, recover from legacy settings
+            if i == 0:
+                if not (c.get("token") or "").strip() and legacy_token:
+                    c["token"] = legacy_token
+                    changed = True
+                if not (c.get("fingerprint") or "").strip() and legacy_fp:
+                    c["fingerprint"] = legacy_fp
+                    changed = True
+
             if not c.get("fingerprint"):
                 c["fingerprint"] = uuid.uuid4().hex[:16]
                 changed = True
@@ -132,10 +129,10 @@ class OctoPrusaCamPlugin(
             sanitized = [
                 {
                     "id": "cam_default",
-                    "name": "Octoprint Cam",
+                    "name": legacy_name,
                     "enabled": True,
-                    "token": "",
-                    "fingerprint": uuid.uuid4().hex[:16],
+                    "token": legacy_token,
+                    "fingerprint": legacy_fp or uuid.uuid4().hex[:16],
                     "snapshot_url": "",
                     "snapshot_auth_user": "",
                     "snapshot_auth_pass": "",
@@ -470,7 +467,7 @@ class OctoPrusaCamPlugin(
                 return (
                     False,
                     res.status_code,
-                    "Unauthorized (HTTP {}): Check your Token and Fingerprint in Prusa Connect.".format(
+                    "Unauthorized (HTTP {}): Token oder Fingerprint ungültig. Falls die Kamera in Prusa Connect bereits verbunden war und der Fingerprint geändert wurde, bitte in Prusa Connect eine neue Kamera anlegen und den neuen Token eintragen.".format(
                         res.status_code
                     ),
                 )
@@ -727,7 +724,7 @@ class OctoPrusaCamPlugin(
 
 __plugin_name__ = "OctoPrusaCam"
 __plugin_pythoncompat__ = ">=3.7,<4"
-__plugin_version__ = "1.1.0"
+__plugin_version__ = "1.1.1"
 __plugin_description__ = "Bridge OctoPrint camera snapshots to Prusa Connect Camera API"
 __plugin_author__ = "Snake4you"
 __plugin_author_email__ = "snake4you@users.noreply.github.com"
