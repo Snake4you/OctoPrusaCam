@@ -36,3 +36,34 @@
     border-radius: 2px;
     display: inline-block;
 }
+
+.octoprusacam-camera-header {
+    margin-bottom: 10px;
+}
+
+.octoprusacam-camera-tabs {
+    margin-bottom: 15px;
+}
+
+.octoprusacam-camera-tabs > li > a {
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.octoprusacam-camera-content {
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 15px 15px 5px 15px;
+    margin-bottom: 20px;
+}
+
+.octoprusacam-toolbar {
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ddd;
+}
+
+.octoprusacam-cam-status-pill {
+    margin-left: 10px;
+    font-size: 12px;
+}

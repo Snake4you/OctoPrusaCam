@@ -3,29 +3,31 @@
 [![OctoPrint Plugin](https://img.shields.io/badge/OctoPrint-Plugin-blue.svg)](https://octoprint.org)
 [![Python Version](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9%20%7C%203.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-yellow.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Release](https://img.shields.io/badge/version-1.0.3-green.svg)](https://github.com/Snake4you/OctoPrusaCam/releases)
+[![Release](https://img.shields.io/badge/version-1.1.0-green.svg)](https://github.com/Snake4you/OctoPrusaCam/releases)
 
-**OctoPrusaCam** ist ein leichtgewichtiges OctoPrint-Plugin, das als direkte Bridge zwischen deiner in OctoPrint eingerichteten Webcam und der **Prusa Connect Camera API** dient.
+**OctoPrusaCam** ist ein leichtgewichtiges OctoPrint-Plugin, das als direkte Bridge zwischen deinen in OctoPrint eingerichteten Kameras und der **Prusa Connect Camera API** dient.
 
-Damit kannst du den Live-Snapshot-Feed deines Druckers nahtlos in der Prusa Connect Weboberfläche und der Prusa App anzeigen lassen – ohne separate Zusatzhardware, ohne Docker-Container und ohne komplexe Skripte.
+Damit kannst du den Live-Snapshot-Feed deiner Kameras nahtlos in der Prusa Connect Weboberfläche und der Prusa App anzeigen lassen – ohne separate Zusatzhardware, ohne Docker-Container und ohne komplexe Skripte.
 
 ---
 
 ## 🚀 Features
 
 - 🔄 **Nahtlose Prusa Connect Integration:** Lädt periodisch Snapshots über den offiziellen Prusa Connect API-Endpunkt (`https://connect.prusa3d.com/c/snapshot`) per HTTP PUT hoch.
-- ⚙️ **Umfangreiche Konfigurationsseite:** Integriert sich direkt in die OctoPrint-Einstellungen unter *Prusa Connect Cam*.
-- 🏷️ **Eigener Kamera-Name:** Frei konfigurierbarer Name (Standard: **Octoprint Cam**), der automatisch mit Prusa Connect synchronisiert wird, anstelle von "Unbenannte Kamera".
-- 🔑 **Token- & Fingerprint-Verwaltung:** Sichere Eingabe des Prusa Connect Kamera-Tokens (mit Ein-/Ausblenden) und automatischer Fingerprint-Generator.
-- 📷 **Automatische Webcam-Erkennung:** Verwendet standardmäßig die in OctoPrint konfigurierte Snapshot-URL (z.B. `/webcam/?action=snapshot` oder `http://127.0.0.1:8080/?action=snapshot`), unterstützt aber auch beliebige benutzerdefinierte URLs.
-- 🧪 **Live-Test mit Vorschau:**
-  - **Lokalen Snapshot testen:** Prüft, ob das Bild von der Kamera empfangen wird, und zeigt eine Miniatur-Vorschau an.
+- 📹 **Multi-Kamera-Unterstützung:** Beliebig viele Kameras mit jeweils eigenem Prusa Connect Token, Name, Snapshot-Quelle und Ausrichtung verwalten.
+- ⚙️ **Übersichtliche Tab-Verwaltung:** Kameras in OctoPrint bequem über Tabs hinzufügen, duplizieren, aktivieren/deaktivieren oder entfernen.
+- 🏷️ **Eigener Kamera-Name:** Frei konfigurierbarer Name pro Kamera (Standard: **Octoprint Cam**), der automatisch mit Prusa Connect synchronisiert wird, anstelle von "Unbenannte Kamera".
+- 🔑 **Token- & Fingerprint-Verwaltung:** Eigener Prusa Connect Kamera-Token und automatischer Fingerprint-Generator für jede Kamera.
+- 📷 **Individuelle Webcam-Quellen:** Unterstützt die OctoPrint-Standardwebcam sowie beliebige individuelle IP-/RTSP-/HTTP-Snapshot-URLs pro Kamera.
+- 🧪 **Live-Test mit Vorschau (pro Kamera):**
+  - **Lokalen Snapshot testen:** Prüft, ob das Bild empfangen wird, und zeigt eine Miniatur-Vorschau an.
   - **Prusa Connect Upload testen:** Lädt sofort einen Test-Snapshot hoch und meldet den genauen HTTP-Statuscode (z.B. HTTP 200/204).
+- ⚡ **Paralleler Bildupload:** Mehrere Kameras werden parallel per Thread-Pool hochgeladen, ohne sich gegenseitig zu blockieren.
 - ⏱️ **Einstellbares Intervall:** Upload-Intervall in Sekunden frei wählbar (Standard & Empfehlung von Prusa: **10 Sekunden**).
 - 🛑 **"Nur während des Drucks"-Modus:** Pausiert den Bildupload automatisch, wenn der Drucker inaktiv ist, um Bandbreite und API-Calls zu sparen.
-- 🔄 **Bildanpassung:** Drehung (0°, 90°, 180°, 270°) und Spiegelung (horizontal/vertikal) direkt vor dem Upload.
+- 🔄 **Bildanpassung:** Drehung (0°, 90°, 180°, 270°) und Spiegelung (horizontal/vertikal) individuell pro Kamera.
 - 🔐 **HTTP Basic Auth:** Optionale Zugangsdaten für passwortgeschützte Webcam-Streams.
-- 📊 **Statusanzeige:** Live-Status mit letztem Upload-Zeitstempel und HTTP-Meldung direkt im Einstellungsmenü.
+- 📊 **Statusanzeige:** Live-Status für jede Kamera und Gesamtstatus direkt im Einstellungsmenü.
 
 ---
 
