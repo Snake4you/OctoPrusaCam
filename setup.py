@@ -4,7 +4,7 @@ import sys
 plugin_identifier = "octoprusacam"
 plugin_package = "octoprint_octoprusacam"
 plugin_name = "OctoPrusaCam"
-plugin_version = "1.0.0"
+plugin_version = "1.0.1"
 plugin_description = "Bridge OctoPrint camera snapshots to Prusa Connect Camera API"
 plugin_author = "Snake4you"
 plugin_author_email = "snake4you@users.noreply.github.com"

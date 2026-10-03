@@ -2,7 +2,8 @@ $(function() {
     function OctoPrusaCamViewModel(parameters) {
         var self = this;
 
-        self.settings = parameters[0];
+        self.settingsViewModel = parameters[0];
+        self.settings = null;
 
         // Observables
         self.showToken = ko.observable(false);
@@ -29,8 +30,27 @@ $(function() {
             self.testFeedbackMessage("");
         };
 
+        self.getPluginSettings = function() {
+            if (self.settingsViewModel && self.settingsViewModel.settings && self.settingsViewModel.settings.plugins && self.settingsViewModel.settings.plugins.octoprusacam) {
+                return self.settingsViewModel.settings.plugins.octoprusacam;
+            }
+            return null;
+        };
+
         self.getEffectiveConfig = function() {
-            var s = self.settings.plugins.octoprusacam;
+            var s = self.getPluginSettings();
+            if (!s) {
+                return {
+                    token: "",
+                    fingerprint: "",
+                    snapshot_url: "",
+                    snapshot_auth_user: "",
+                    snapshot_auth_pass: "",
+                    rotate: 0,
+                    flip_h: false,
+                    flip_v: false
+                };
+            }
             return {
                 token: (s.token ? s.token() : "") || "",
                 fingerprint: (s.fingerprint ? s.fingerprint() : "") || "",
@@ -47,13 +67,19 @@ $(function() {
             OctoPrint.simpleApiCommand("octoprusacam", "generate_fingerprint", {})
                 .done(function(response) {
                     if (response && response.fingerprint) {
-                        self.settings.plugins.octoprusacam.fingerprint(response.fingerprint);
+                        var s = self.getPluginSettings();
+                        if (s && s.fingerprint) {
+                            s.fingerprint(response.fingerprint);
+                        }
                     }
                 })
                 .fail(function() {
                     // Fallback client-side generator
                     var rand = Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10);
-                    self.settings.plugins.octoprusacam.fingerprint(rand);
+                    var s = self.getPluginSettings();
+                    if (s && s.fingerprint) {
+                        s.fingerprint(rand);
+                    }
                 });
         };
 
@@ -144,7 +170,14 @@ $(function() {
                 });
         };
 
+        self.onBeforeBinding = function() {
+            if (self.settingsViewModel && self.settingsViewModel.settings) {
+                self.settings = self.settingsViewModel.settings;
+            }
+        };
+
         self.onSettingsShown = function() {
+            self.clearFeedback();
             self.refreshStatus();
         };
     }

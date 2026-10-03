@@ -329,7 +329,10 @@ class OctoPrusaCamPlugin(
             snapshot_url = data.get("snapshot_url")
             auth_user = data.get("snapshot_auth_user")
             auth_pass = data.get("snapshot_auth_pass")
-            rotate = int(data.get("rotate", self._settings.get_int(["rotate"]) or 0))
+            try:
+                rotate = int(data.get("rotate", self._settings.get_int(["rotate"]) or 0))
+            except (ValueError, TypeError):
+                rotate = self._settings.get_int(["rotate"]) or 0
             flip_h = bool(data.get("flip_h", self._settings.get_boolean(["flip_h"])))
             flip_v = bool(data.get("flip_v", self._settings.get_boolean(["flip_v"])))
 
@@ -365,7 +368,10 @@ class OctoPrusaCamPlugin(
             snapshot_url = data.get("snapshot_url")
             auth_user = data.get("snapshot_auth_user")
             auth_pass = data.get("snapshot_auth_pass")
-            rotate = int(data.get("rotate", self._settings.get_int(["rotate"]) or 0))
+            try:
+                rotate = int(data.get("rotate", self._settings.get_int(["rotate"]) or 0))
+            except (ValueError, TypeError):
+                rotate = self._settings.get_int(["rotate"]) or 0
             flip_h = bool(data.get("flip_h", self._settings.get_boolean(["flip_h"])))
             flip_v = bool(data.get("flip_v", self._settings.get_boolean(["flip_v"])))
 
@@ -440,7 +446,7 @@ class OctoPrusaCamPlugin(
             {
                 "type": "settings",
                 "name": "Prusa Connect Cam",
-                "custom_bindings": False,
+                "custom_bindings": True,
             }
         ]
 
@@ -462,7 +468,7 @@ class OctoPrusaCamPlugin(
 
 __plugin_name__ = "OctoPrusaCam"
 __plugin_pythoncompat__ = ">=3.7,<4"
-__plugin_version__ = "1.0.0"
+__plugin_version__ = "1.0.1"
 __plugin_description__ = "Bridge OctoPrint camera snapshots to Prusa Connect Camera API"
 __plugin_author__ = "Snake4you"
 __plugin_author_email__ = "snake4you@users.noreply.github.com"

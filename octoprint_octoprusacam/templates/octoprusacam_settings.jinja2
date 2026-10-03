@@ -1,4 +1,4 @@
-<form class="form-horizontal octoprusacam-settings" id="settings_plugin_octoprusacam">
+<form class="form-horizontal octoprusacam-settings" onsubmit="return false;">
     <div class="alert alert-info">
         <strong>OctoPrusaCam</strong> verbindet deine OctoPrint-Kamera mit <strong>Prusa Connect</strong>.
         Jede Kamera wird als eigenständige Snapshot-Kamera in Prusa Connect geführt.
@@ -20,7 +20,7 @@
                 <!-- /ko -->
 
                 <span class="muted octoprusacam-status-text" data-bind="text: statusMessage"></span>
-                <!-- ko if: statusTime -->
+                <!-- ko if: statusTime() -->
                 <small class="muted" style="display:block; margin-top:3px;">
                     Letzter Status: <span data-bind="text: statusTime"></span>
                 </small>
@@ -35,7 +35,7 @@
     <div class="control-group">
         <div class="controls">
             <label class="checkbox">
-                <input type="checkbox" data-bind="checked: settings.plugins.octoprusacam.enabled">
+                <input type="checkbox" data-bind="checked: settingsViewModel.settings.plugins.octoprusacam.enabled">
                 <strong>Prusa Connect Camera Bridge aktivieren</strong>
             </label>
             <span class="help-block">Aktiviert den periodischen Bildupload an Prusa Connect.</span>
@@ -52,7 +52,7 @@
                 <div class="input-append">
                     <input id="octoprusacam_token"
                            class="input-xlarge"
-                           data-bind="attr: { type: showToken() ? 'text' : 'password' }, value: settings.plugins.octoprusacam.token"
+                           data-bind="attr: { type: showToken() ? 'text' : 'password' }, value: settingsViewModel.settings.plugins.octoprusacam.token"
                            placeholder="z.B. a1b2c3d4e5f6... (20 Zeichen)">
                     <button class="btn" type="button" data-bind="click: toggleShowToken" title="Token anzeigen / verbergen">
                         <i data-bind="css: { 'icon-eye-open': !showToken(), 'icon-eye-close': showToken() }"></i>
@@ -71,7 +71,7 @@
                     <input id="octoprusacam_fingerprint"
                            type="text"
                            class="input-xlarge"
-                           data-bind="value: settings.plugins.octoprusacam.fingerprint"
+                           data-bind="value: settingsViewModel.settings.plugins.octoprusacam.fingerprint"
                            placeholder="Eindeutige Kamera-ID (z.B. 16 Hex-Zeichen)">
                     <button class="btn" type="button" data-bind="click: generateFingerprint" title="Neuen Fingerprint generieren">
                         <i class="icon-refresh"></i> Neu
@@ -96,7 +96,7 @@
                 <input id="octoprusacam_snapshot_url"
                        type="text"
                        class="input-xxlarge"
-                       data-bind="value: settings.plugins.octoprusacam.snapshot_url"
+                       data-bind="value: settingsViewModel.settings.plugins.octoprusacam.snapshot_url"
                        placeholder="Leer lassen für OctoPrint Standard-Webcam">
                 <span class="help-block">
                     Lasse dieses Feld leer, um die in OctoPrint konfigurierte Webcam Snapshot-URL (z.B. <code>/webcam/?action=snapshot</code> oder <code>http://127.0.0.1:8080/?action=snapshot</code>) automatisch zu verwenden.
@@ -112,14 +112,14 @@
                     <span class="add-on"><i class="icon-user"></i></span>
                     <input type="text"
                            class="input-medium"
-                           data-bind="value: settings.plugins.octoprusacam.snapshot_auth_user"
+                           data-bind="value: settingsViewModel.settings.plugins.octoprusacam.snapshot_auth_user"
                            placeholder="Benutzername">
                 </div>
                 <div class="input-prepend" style="margin-left: 10px;">
                     <span class="add-on"><i class="icon-key"></i></span>
                     <input type="password"
                            class="input-medium"
-                           data-bind="value: settings.plugins.octoprusacam.snapshot_auth_pass"
+                           data-bind="value: settingsViewModel.settings.plugins.octoprusacam.snapshot_auth_pass"
                            placeholder="Passwort">
                 </div>
                 <span class="help-block">Nur erforderlich, falls deine Webcam-Snapshot-URL mit HTTP Basic Auth geschützt ist.</span>
@@ -130,17 +130,17 @@
         <div class="control-group">
             <label class="control-label">Bildausrichtung</label>
             <div class="controls">
-                <select class="input-medium" data-bind="value: settings.plugins.octoprusacam.rotate">
+                <select class="input-medium" data-bind="value: settingsViewModel.settings.plugins.octoprusacam.rotate">
                     <option value="0">0° (Normal)</option>
                     <option value="90">90° im Uhrzeigersinn</option>
                     <option value="180">180° auf den Kopf</option>
                     <option value="270">270° im Uhrzeigersinn</option>
                 </select>
                 <label class="checkbox inline" style="margin-left: 15px;">
-                    <input type="checkbox" data-bind="checked: settings.plugins.octoprusacam.flip_h"> Horizontal spiegeln
+                    <input type="checkbox" data-bind="checked: settingsViewModel.settings.plugins.octoprusacam.flip_h"> Horizontal spiegeln
                 </label>
                 <label class="checkbox inline" style="margin-left: 15px;">
-                    <input type="checkbox" data-bind="checked: settings.plugins.octoprusacam.flip_v"> Vertikal spiegeln
+                    <input type="checkbox" data-bind="checked: settingsViewModel.settings.plugins.octoprusacam.flip_v"> Vertikal spiegeln
                 </label>
             </div>
         </div>
@@ -161,7 +161,7 @@
                        max="3600"
                        step="1"
                        class="input-mini"
-                       data-bind="value: settings.plugins.octoprusacam.upload_interval">
+                       data-bind="value: settingsViewModel.settings.plugins.octoprusacam.upload_interval">
                 <span class="help-inline">Sekunden (Standard & Empfehlung von Prusa: <strong>10s</strong>)</span>
             </div>
         </div>
@@ -169,7 +169,7 @@
         <div class="control-group">
             <div class="controls">
                 <label class="checkbox">
-                    <input type="checkbox" data-bind="checked: settings.plugins.octoprusacam.upload_only_printing">
+                    <input type="checkbox" data-bind="checked: settingsViewModel.settings.plugins.octoprusacam.upload_only_printing">
                     <strong>Nur während des Drucks hochladen</strong>
                 </label>
                 <span class="help-block">Pausiert den Upload, wenn der Drucker im Leerlauf oder ausgeschaltet ist, um Netzwerk- und Server-Ressourcen zu schonen.</span>
