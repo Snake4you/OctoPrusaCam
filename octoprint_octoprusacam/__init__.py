@@ -23,7 +23,7 @@ class OctoPrusaCamPlugin(
     octoprint.plugin.SimpleApiPlugin,
     octoprint.plugin.EventHandlerPlugin,
 ):
-    PRUSA_CONNECT_SNAPSHOT_URL = "https://webcam.connect.prusa3d.com/c/snapshot"
+    PRUSA_CONNECT_SNAPSHOT_URL = "https://connect.prusa3d.com/c/snapshot"
 
     def __init__(self):
         self._timer = None
@@ -245,6 +245,8 @@ class OctoPrusaCamPlugin(
             "content-type": "image/jpg",
             "fingerprint": str(fingerprint).strip(),
             "token": str(token).strip(),
+            "Fingerprint": str(fingerprint).strip(),
+            "Token": str(token).strip(),
         }
 
         try:
@@ -468,7 +470,7 @@ class OctoPrusaCamPlugin(
 
 __plugin_name__ = "OctoPrusaCam"
 __plugin_pythoncompat__ = ">=3.7,<4"
-__plugin_version__ = "1.0.1"
+__plugin_version__ = "1.0.2"
 __plugin_description__ = "Bridge OctoPrint camera snapshots to Prusa Connect Camera API"
 __plugin_author__ = "Snake4you"
 __plugin_author_email__ = "snake4you@users.noreply.github.com"
